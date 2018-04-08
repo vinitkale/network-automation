@@ -6,11 +6,11 @@
   
     <div class="collapse navbar-collapse" id="navbarColor03">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
+        <li <% if(title == 'home'){ %>class="nav-item active"<% }else{ %>class="nav-item" <% } %>>
           <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/about">About</a>
+        <li <% if(title == 'output'){ %>class="nav-item active"<% }else{ %>class="nav-item" <% } %>>
+          <a class="nav-link" href="#">Output</a>
         </li>
       </ul>
     </div>

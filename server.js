@@ -1,11 +1,11 @@
 // server.js
 // load the things we need
 var express = require('express');
-var SSH = require('simple-ssh');
 var Client = require('ssh2').Client;
 var bodyParser = require("body-parser");
 var formidable = require("formidable");
 var app = express();
+var qs = require('querystring');
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
@@ -16,23 +16,27 @@ app.use(bodyParser.json())
 
 // index page 
 app.get('/', function (req, res) {
-    res.render('pages/index');
+    res.render('pages/index',{'title':'home'});
 });
 
-app.get('/ssh', function (req, res) {
-
+app.post('/ssh', function (req, res) {
     var arrmixFormData = req.body;
-
     var conn = new Client();
+
+    conn.on('error', function( error ) {
+        var jsonError = JSON.stringify(error);
+        conn.end();
+        res.render('pages/output',{'data':'Something went wrong please try again.','title':'output'}); 
+    });
+
     conn.on('ready', function () {
         console.log('Client :: ready');
-        conn.exec(arrmixFormData.commond, function (err, stream) {
-            if (err) throw err;
+        conn.exec(arrmixFormData['command'], function (err, stream) {
             stream.on('close', function (code, signal) {
                 console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
                 conn.end();
             }).on('data', function (data) {
-                console.log('STDOUT: ' + data);
+                res.render('pages/output',{'data':data,'title':'output'}); 
             }).stderr.on('data', function (data) {
                 console.log('STDERR: ' + data);
             });
